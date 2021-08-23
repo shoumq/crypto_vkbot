@@ -58,16 +58,29 @@ for event in VkLongPoll(session).listen():
 
             json_resp = json.loads(resp.text)
 
-            if json_resp[text]["BTC"] != '-1':
+            # if json_resp[text]["BTC"] == json_resp[text]['BTC']:
+            #     print("BTC:", str(json_resp[text]['BTC']))
+            #     print("USD:", str(json_resp[text]['USD']))
+            #     print("EUR:", str(json_resp[text]['EUR']))
+            #     print("RUB:", str(json_resp[text]['RUB']))
+            # elif json_resp["Response"] == "Error":
+            # else:
+            #     print(user_id, 'Криптовалюта не найдена!', keyboard)
+
+            if json_resp[text] == json_resp[text]:
                 print("BTC:", str(json_resp[text]['BTC']))
                 print("USD:", str(json_resp[text]['USD']))
                 print("EUR:", str(json_resp[text]['EUR']))
                 print("RUB:", str(json_resp[text]['RUB']))
             elif json_resp["Response"] == "Error":
-                send_message(user_id, 'Криптовалюта не найдена!', keyboard)
+                print(user_id, text, 'Криптовалюта не найдена!')
+            elif json_resp[text] == None:
+                print(user_id, text, 'Криптовалюта не найдена!')
+            else:
+                print(user_id, text, 'Криптовалюта не найдена!')
 
-            # Отправка сообщений
-            if json_resp[text]["BTC"] != '-1':
+           # Отправка сообщений
+            if json_resp[text] == json_resp[text]:
                 send_message(user_id, 'BTC: ' +
                              str(json_resp[text]['BTC']), keyboard)
                 send_message(user_id, 'USD: ' +
@@ -76,6 +89,9 @@ for event in VkLongPoll(session).listen():
                              str(json_resp[text]['EUR']), keyboard)
                 send_message(user_id, 'RUB: ' +
                              str(json_resp[text]['RUB']), keyboard)
-
             elif json_resp["Response"] == "Error":
+                send_message(user_id, 'Криптовалюта не найдена!', keyboard)
+            elif json_resp[text] == None:
+                 send_message(user_id, 'Криптовалюта не найдена!', keyboard)
+            else:
                 send_message(user_id, 'Криптовалюта не найдена!', keyboard)
