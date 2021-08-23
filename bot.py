@@ -63,7 +63,6 @@ for event in VkLongPoll(session).listen():
             #     print("USD:", str(json_resp[text]['USD']))
             #     print("EUR:", str(json_resp[text]['EUR']))
             #     print("RUB:", str(json_resp[text]['RUB']))
-            # elif json_resp["Response"] == "Error":
             # else:
             #     print(user_id, 'Криптовалюта не найдена!', keyboard)
 
