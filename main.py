@@ -2,10 +2,11 @@ import vk_api
 import json
 import requests
 from vk_api import longpoll
-from config import bot_token
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.upload import VkUpload
+
+bot_token = '36e1e01db40c2317b3afa628c3d3fc94fda70e1d12a9a72b7b44359d003abcd2c500bc35a503ff9d62e9f'
 
 session = vk_api.VkApi(token=bot_token)
 
@@ -27,7 +28,7 @@ def send_message(user_id, message, keyboard=None):
 
 for event in VkLongPoll(session).listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-        text = event.text.upper()
+        text = event.text
         user_id = event.user_id
 
         print(user_id, ':', text)
@@ -51,9 +52,9 @@ for event in VkLongPoll(session).listen():
 
             for btn, btn_color in zip(buttons, button_colors):
                 keyboard.add_button(btn, btn_color)
-
-            url = f'https://min-api.cryptocompare.com/data/pricemulti?fsyms=' + text + \
-                '&tsyms=BTC,USD,EUR,RUB&api_key=416db249c44d22c2be9e0f207eb26c3da07383c4b2134c41470ff46d6cc1daef'
+                
+            url = 'https://min-api.cryptocompare.com/data/price?fsym=' + \
+                text.upper() + '&tsyms=BTC,USD,EUR,RUB'
             resp = requests.get(url)
 
             json_resp = json.loads(resp.text)
@@ -66,31 +67,23 @@ for event in VkLongPoll(session).listen():
             # else:
             #     print(user_id, 'Криптовалюта не найдена!', keyboard)
 
-            if json_resp[text] == json_resp[text]:
-                print("BTC:", str(json_resp[text]['BTC']))
-                print("USD:", str(json_resp[text]['USD']))
-                print("EUR:", str(json_resp[text]['EUR']))
-                print("RUB:", str(json_resp[text]['RUB']))
-            elif json_resp["Response"] == "Error":
-                print(user_id, text, 'Криптовалюта не найдена!')
-            elif json_resp[text] == None:
-                print(user_id, text, 'Криптовалюта не найдена!')
-            else:
+            try:
+                print("BTC:", str(json_resp['BTC']))
+                print("USD:", str(json_resp['USD']))
+                print("EUR:", str(json_resp['EUR']))
+                print("RUB:", str(json_resp['RUB']))
+
+                # Сообщение в Вк
+                send_message(user_id, 'BTC: ' +
+                        str(json_resp['BTC']), keyboard)
+                send_message(user_id, 'USD: ' +
+                            str(json_resp['USD']), keyboard)
+                send_message(user_id, 'EUR: ' +
+                            str(json_resp['EUR']), keyboard)
+                send_message(user_id, 'RUB: ' +
+                            str(json_resp['RUB']), keyboard)
+            except:
                 print(user_id, text, 'Криптовалюта не найдена!')
 
-           # Отправка сообщений
-            if json_resp[text] == json_resp[text]:
-                send_message(user_id, 'BTC: ' +
-                             str(json_resp[text]['BTC']), keyboard)
-                send_message(user_id, 'USD: ' +
-                             str(json_resp[text]['USD']), keyboard)
-                send_message(user_id, 'EUR: ' +
-                             str(json_resp[text]['EUR']), keyboard)
-                send_message(user_id, 'RUB: ' +
-                             str(json_resp[text]['RUB']), keyboard)
-            elif json_resp["Response"] == "Error":
-                send_message(user_id, 'Криптовалюта не найдена!', keyboard)
-            elif json_resp[text] == None:
-                 send_message(user_id, 'Криптовалюта не найдена!', keyboard)
-            else:
+                # Сообщение в Вк
                 send_message(user_id, 'Криптовалюта не найдена!', keyboard)
